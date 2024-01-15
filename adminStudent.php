@@ -21,19 +21,13 @@ if (empty($username)) {
     <title>StudentGuard Pro || Log-In</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <style>
-        .toast {
-            position: fixed;
-        }
-
         .card {
             width: 500px;
             margin-top: 20px;
         }
 
-        .card-body {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+        .toast {
+            position: fixed;
         }
 
         @media all and (max-width: 400px) {
@@ -84,10 +78,10 @@ if (empty($username)) {
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="#">Violations</a>
+                            <a class="nav-link" href="admin.php">Violations</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="adminStudent.php">Students</a>
+                            <a class="nav-link active" aria-current="page" href="adminStudent.php">Students</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="adminFaculty.php">Faculty</a>
@@ -101,7 +95,7 @@ if (empty($username)) {
         </nav>
 
         <?php
-        $query = "SELECT * FROM violation;";
+        $query = "SELECT * FROM student;";
         $stmt = $pdo->prepare($query);
         $stmt->execute();
         $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -110,15 +104,19 @@ if (empty($username)) {
             echo ('');
         } else {
             foreach ($results as $row) {
-                $violationNo = htmlspecialchars($row["violationNo"]);
-                $violationName = htmlspecialchars($row["violationName"]);
+                $studFirstName = htmlspecialchars($row["studFirstName"]);
+                $studLastName = htmlspecialchars($row["studLastName"]);
+                $studMiddleName = htmlspecialchars($row["studMiddleName"]);
+                $studBlock = htmlspecialchars($row["studBlock"]);
+                $studNo = htmlspecialchars($row["studNo"]);
 
                 echo ('
                     
                     <div class="card">
                         <div class="card-body">
-                            <h5 class="card-title">' . $violationName . '</h5>
-                            <a href="includes/violationRemove.php?violationNo=' . $violationNo . '"><button type="button" class="card-link btn btn-danger">Clear</button></a>
+                            <h5 class="card-title">' . $studLastName . ', ' .  $studFirstName . ', ' . $studMiddleName . '</h5>
+                            <h6 class="card-subtitle mb-2 text-body-secondary">' . $studBlock . '</h6>
+                            <a href="includes/studentDelete.php?studNo=' . $studNo . '"><button type="button" class="card-link btn btn-danger">Delete</button></a>
                         </div>
                     </div>
                     
@@ -130,9 +128,14 @@ if (empty($username)) {
 
         <div class="card">
             <div class="card-body">
-                <form action="includes/violationAdd.php" method="GET">
-                    <input type="text" name="violationName" class="card-title">
-                    <h6 class="card-subtitle mb-2 text-body-secondary">Add Violation</h6>
+                <form action="includes/studentAdd.php" method="GET">
+                    <h5 class="card-title">Add Student</h5>
+                    <input required type="text" name="firstName" class="card-title" placeholder="First Name">
+                    <input required type="text" name="middleName" class="card-title" placeholder="Middle Name">
+                    <input required type="text" name="lastName" class="card-title" placeholder="Last Name">
+                    <input required type="text" name="block" class="card-title" placeholder="Block">
+                    <input required type="text" name="studID" class="card-title" placeholder="Student ID">
+                    <input required type="text" name="studPassword" class="card-title" placeholder="Student Password">
                     <button type="submit" class="card-link btn btn-primary">Submit</button>
                     <button type="reset" class="card-link btn btn-danger">Clear</button>
                 </form>
@@ -142,12 +145,23 @@ if (empty($username)) {
 
         <div class="toast" id="EpicToast1" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="toast-header bg-success">
+                <strong class="me-auto text-white">Added!!!</strong>
+                <small class="text-white">...</small>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                Student Added Successfully
+            </div>
+        </div>
+
+        <div class="toast" id="EpicToast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header bg-success">
                 <strong class="me-auto text-white">Deleted!!!</strong>
                 <small class="text-white">...</small>
                 <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
             <div class="toast-body">
-                Violation deleted successfully.
+                Student deleted.
             </div>
         </div>
     </header>
@@ -159,8 +173,12 @@ if (empty($username)) {
             animation: true,
             delay: 3000
         }
-        if (window.location.href.includes("deleteSuccess")) {
+        if (window.location.href.includes("addSuccess")) {
             var toastHTMLElement = document.getElementById("EpicToast1");
+            var toastElement = new bootstrap.Toast(toastHTMLElement, option);
+            toastElement.show();
+        } else if (window.location.href.includes("deleteSuccess")) {
+            var toastHTMLElement = document.getElementById("EpicToast");
             var toastElement = new bootstrap.Toast(toastHTMLElement, option);
             toastElement.show();
         }

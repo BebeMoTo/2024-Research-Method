@@ -7,8 +7,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
     if (empty($username) || empty($password)) {
-        exit();
         header("Location: ../index.php?loginError");
+        exit();
     }
 
     //connecting to database
@@ -61,24 +61,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     if (empty($results)) {
                         header("Location: ../index.php?notInDB");
                     } else {
-                        require_once 'config.php';
+                        //require_once 'config.php';
+                        session_start();
                         $_SESSION['adminUsername'] = $username;
                         header("Location: ../admin.php");
                     }
                 } else {
-                    require_once 'config.php';
+                    //require_once 'config.php';
+                    session_start();
                     $_SESSION['osaUsername'] = $username;
                     header("Location: ../osa.php");
                 }
             } else {
-                require_once 'config.php';
+                //require_once 'config.php';
+                session_start();
                 $_SESSION['facultyUsername'] = $username;
                 header("Location: ../faculty.php");
             }
         } else {
-            require_once 'config.php';
+            //require_once 'config.php';
+            session_start();
             $_SESSION['studUsername'] = $username;
-            echo ($_SESSION['studUsername']);
             header("Location: ../student.php");
         }
     } catch (PDOException $e) {

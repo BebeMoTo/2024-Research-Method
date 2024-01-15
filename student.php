@@ -1,16 +1,24 @@
 <?php
+session_start();
 require_once "includes/dbh.inc.php";
-require_once "includes/config.php";
+//require_once "includes/config.php";
 $username = $_SESSION['studUsername'];
+if (empty($username)) {
+    session_unset();
+    session_destroy();
+    header("Location: index.php?loginError");
+}
 
-$query = "SELECT * FROM student WHERE studID = :studID;";
+$query = "SELECT * FROM student WHERE BINARY studID = :studID;";
 $stmt = $pdo->prepare($query);
 $stmt->bindParam(":studID", $username);
 $stmt->execute();
 $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 if (empty($results)) {
-    echo ("TITE");
+    session_unset();
+    session_destroy();
+    header("Location: index.php?loginError");
 } else {
     foreach ($results as $row) {
         $studFirstName = htmlspecialchars($row["studFirstName"]);
@@ -47,7 +55,7 @@ if (empty($results)) {
     <header class="header">
         <nav class="navbar bg-body-tertiary bg-dark border-bottom border-body" data-bs-theme="dark">
             <div class="container-fluid">
-                <a class="navbar-brand" href="index.php">
+                <a class="navbar-brand" href="includes/logout.php">
                     <img src="images/favicon.png" alt="Logo" width="30" height="24" class="d-inline-block align-text-top">
                     StudentGuard Pro: <b>STUDENT</b>
                 </a>
@@ -74,7 +82,8 @@ if (empty($results)) {
                 } else {
                     foreach ($results as $row) {
                         $osaViolation = htmlspecialchars($row["osaViolation"]);
-                        $osaDateViolation = htmlspecialchars($row["osaDateViolation"]);
+                        $osaDateViolationed = htmlspecialchars($row["osaDateViolation"]);
+                        $osaDateViolation = substr($osaDateViolationed, 0, 10);
                         $query = "SELECT * FROM violation WHERE violationNo = :violationNo;";
                         $stmt = $pdo->prepare($query);
                         $stmt->bindParam(":violationNo", $osaViolation);

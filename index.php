@@ -9,6 +9,12 @@
     <title>StudentGuard Pro || Log-In</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <style>
+        @media all and (max-width: 400px) {
+            .toast {
+                width: 90%;
+            }
+        }
+
         .form {
             background-color: #fff;
             display: block;
@@ -115,14 +121,15 @@
                     </span>
                 </div>
                 <div class="input-container">
-                    <input type="password" placeholder="Enter password" required name="password" </div>
-                    <button type="submit" class="submit">
-                        Log In
-                    </button>
+                    <input type="password" placeholder="Enter password" required name="password">
+                </div>
+                <button type="submit" class="submit">
+                    Log In
+                </button>
 
-                    <p class="signup-link">
+                <p class="signup-link">
 
-                    </p>
+                </p>
             </form>
         </div>
 
@@ -150,6 +157,17 @@
         </div>
     </div>
 
+    <div class="toast" id="EpicToast2" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header bg-success">
+            <strong class="me-auto text-white">Logged Out</strong>
+            <small class="text-white">...</small>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            Logged Out Successfully
+        </div>
+    </div>
+
     <script src="index.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
     <script>
@@ -165,6 +183,10 @@
             toastElement.show();
         } else if (window.location.href.includes("loginError")) {
             var toastHTMLElement = document.getElementById("EpicToast1");
+            var toastElement = new bootstrap.Toast(toastHTMLElement, option);
+            toastElement.show();
+        } else if (window.location.href.includes("logout")) {
+            var toastHTMLElement = document.getElementById("EpicToast2");
             var toastElement = new bootstrap.Toast(toastHTMLElement, option);
             toastElement.show();
         }
